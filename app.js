@@ -11,9 +11,11 @@ const currentSize = document.getElementById('currentSize');
 const clearButton = document.getElementById('clear');
 const eraserButton = document.getElementById('eraser');
 const rainbowButton = document.getElementById('rainbow');
+const gridButton = document.getElementById('gridButton');
 
 let eraserEnabled = false;
 let rainbowEnabled = false;
+let gridEnabled = false;
 let mouseDown = false
 document.body.onmousedown = () => (mouseDown = true)
 document.body.onmouseup = () => (mouseDown = false)
@@ -36,7 +38,7 @@ clearButton.onclick = () => {
 }
 
 eraserButton.onclick = () => {
-    if(!eraserEnabled){
+    if (!eraserEnabled) {
         setCurrentColor('white');
         enableButton(eraserButton);
         eraserEnabled = true;
@@ -49,13 +51,30 @@ eraserButton.onclick = () => {
     }
 }
 
+gridButton.onclick = () => {
+    const gridElements = document.querySelectorAll('.grid-element');
+    if (!gridEnabled) {
+        gridEnabled = true;
+        enableButton(gridButton);
+        gridElements.forEach((element) => {
+            element.style.border = '1px solid black';
+        })
+    } else {
+        disableButton(gridButton);
+        gridEnabled = false;
+        gridElements.forEach((element) => {
+            element.style.border = '';
+        })
+    }
+}
+
 rainbowButton.onclick = () => {
-    if(!rainbowEnabled){
+    if (!rainbowEnabled) {
         rainbowEnabled = true;
         eraserButton.style = '';
         eraserEnabled = false;
         enableButton(rainbowButton);
-    } else{
+    } else {
         setCurrentColor(selectedColor.value);
         rainbowEnabled = false;
         rainbowButton.style = '';
@@ -81,12 +100,18 @@ function setupGrid(size) {
         gridElement.addEventListener('mousedown', changeColor);
         gridElement.addEventListener('mouseover', changeColor)
     }
+    if(gridEnabled) {
+        const gridElements = document.querySelectorAll('.grid-element');
+        gridElements.forEach((element) => {
+            element.style.border = '1px solid black';
+        })
+    }
 }
 
 function changeColor(e) {
     if (e.type === 'mouseover' && !mouseDown) return;
-    if(rainbowEnabled && !eraserEnabled){
-        const randomColor = Math.floor(Math.random()*16777215).toString(16);
+    if (rainbowEnabled && !eraserEnabled) {
+        const randomColor = Math.floor(Math.random() * 16777215).toString(16);
         e.target.style.backgroundColor = `#${randomColor}`;
         return;
     }
@@ -116,5 +141,5 @@ function enableButton(button) {
 }
 
 function disableButton(button) {
-   button.style = '';
+    button.style = '';
 }
